@@ -12,4 +12,4 @@ Additionally, the training and testing sets, as well as the model checkpoints fo
 ```bash
 gdown https://drive.google.com/drive/folders/1ln6K561FxiqqGZ2n-LmJaAnrJtuleE-U?usp=drive_link -O /path/to/destination --folder
 ```
-Replace [`/path/to/destination`] with the directory where you'd like to save the downloaded files.
+Replace `/path/to/destination` with the directory where you'd like to save the downloaded files.
