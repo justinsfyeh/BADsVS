@@ -10,6 +10,6 @@ The manuscript of this repository is in preparation.
 Additionally, the training and testing sets, as well as the model checkpoints for the BoB (Bag-of-Bonds) model, and the optimized molecule structure files (.xyz) used for feature generation, can be downloaded using gdown:
 
 ```bash
-gdown https://drive.google.com/drive/folders/1ln6K561FxiqqGZ2n-LmJaAnrJtuleE-U?usp=drive_link -O /path/to/destination --folder
+gdown https://drive.google.com/drive/folders/1ln6K561FxiqqGZ2n-LmJaAnrJtuleE-U?usp=drive_link --folder
 ```
-Replace `/path/to/destination` with the directory where you'd like to save the downloaded files.
+
