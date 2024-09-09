@@ -26,7 +26,7 @@ def argbuilder():
     parser.add_argument('--num_iters', default=50, type=int, help='Number of iterations for hyperparameter optimization.')
     parser.add_argument('--save_dir', default='../',type=str, help='Directory to save models and results.')
     parser.add_argument('--minimize_score', default=True, type=bool, help='Minimize the score (True) or maximize (False).')
-    parser.add_argument('--config_save_path', default='../', type=str, help='Path to save hyperparameter configurations.')
+    parser.add_argument('--config_save_path', type=str, help='Path to save hyperparameter configurations.')
     
     return parser.parse_args()
 
