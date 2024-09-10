@@ -26,11 +26,17 @@ conda env create -f environment.yml
 ```
 
 ## Datasets
-This work explores the potential of different featurization methods and ML models, including the use of the D-MPNN model utilizing the chemprop package.
+This study explores various featurization methods and ML models, including the D-MPNN model implemented using the chemprop package.
 
-The random splitted datasets for evaluating the D-MPNN model can be found at: [`D-MPNN_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/D-MPNN_train.csv), [`D-MPNN_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/D-MPNN_test.csv).
+The randomly split datasets for evaluating the chemprop model can be accessed here:
+[`D-MPNN_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/D-MPNN_train.csv), [`D-MPNN_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/D-MPNN_test.csv).
 
-Additionally, the training and testing sets, as well as the model checkpoints for the BoB (Bag-of-Bonds) model, and the optimized molecule structure files (.xyz) used for feature generation, can be downloaded using gdown:
+For the regression models (RR, SVR, KRR), three different featurization methods have been implemented and evaluated. The datasets containing the pre-generated features, ready for training and testing, can be found below:
+* Dressed Atoms (DA) model: [`DA_train.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/DA_train.xlsx), [`DA_test.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/DA_test.xlsx).
+* Sum-over-Bonds (SoB) model: [`SoB_train.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/SoB_train.xlsx), [`SoB_test.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/SoB_test.xlsx).
+* Bag-of-Bonds (BoB) model: [`BoB_train.xlsx`], [`BoB_test.xlsx`]
+
+Additionally, the training and testing sets, as well as the model checkpoints for the BoB model, and the optimized molecule structure files (.xyz) used for feature generation, can be downloaded using gdown:
 
 ```bash
 gdown https://drive.google.com/drive/folders/1ln6K561FxiqqGZ2n-LmJaAnrJtuleE-U?usp=drive_link --folder
