@@ -26,6 +26,10 @@ conda env create -f environment.yml
 ```
 
 ## Datasets
+This work explores the potential of different featurization methods and ML models, including the use of the D-MPNN model utilizing the chemprop package.
+
+The random splitted datasets for evaluating the D-MPNN model can be found at: [`D-MPNN_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/D-MPNN_train.csv), [`D-MPNN_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/D-MPNN_test.csv).
+
 Additionally, the training and testing sets, as well as the model checkpoints for the BoB (Bag-of-Bonds) model, and the optimized molecule structure files (.xyz) used for feature generation, can be downloaded using gdown:
 
 ```bash
