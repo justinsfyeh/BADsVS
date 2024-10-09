@@ -32,9 +32,9 @@ The randomly split datasets for evaluating the chemprop model can be accessed he
 [`D-MPNN_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/D-MPNN_train.csv), [`D-MPNN_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/D-MPNN_test.csv).
 
 For the regression models (RR, SVR, KRR), three different featurization methods have been implemented and evaluated. The datasets containing the pre-generated features, ready for training and testing, can be found below:
-* Dressed Atoms (DA) model: [`DA_train.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/DA_train.xlsx), [`DA_test.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/DA_test.xlsx).
-* Sum-over-Bonds (SoB) model: [`SoB_train.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/SoB_train.xlsx), [`SoB_test.xlsx`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/SoB_test.xlsx).
-* Bag-of-Bonds (BoB) model: [`BoB_train.xlsx`], [`BoB_test.xlsx`]
+* Dressed Atoms (DA) model: [`DA_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/DA_train.csv), [`DA_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/DA_test.csv).
+* Sum-over-Bonds (SoB) model: [`SoB_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/SoB_train.csv), [`SoB_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/SoB_test.csv).
+* Bag-of-Bonds (BoB) model: [`BoB_train.csv`], [`BoB_test.csv`]
 
 Additionally, the training and testing sets, as well as the model checkpoints for the BoB model, and the optimized molecule structure files (.xyz) used for feature generation, can be downloaded using gdown:
 
