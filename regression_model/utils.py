@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import os
 
 def makedirs(path: str, isfile: bool = False) -> None:
     """
@@ -18,17 +17,17 @@ def makedirs(path: str, isfile: bool = False) -> None:
 
 def separate_data(args):
     """
-    Loads and separates the training and testing data from Excel files.
+    Loads and separates the training and testing data from CSV files.
     :param args: Arguments that contain data directory and column information.
     :return: X_train, X_test, y_train, y_test
     """
-    # Load training data
-    df_train = pd.read_excel(os.path.join(args.train_dir, f'{args.feat}_train.xlsx'))
+    # Load training data from CSV
+    df_train = pd.read_csv(os.path.join(args.train_dir, f'{args.feat}_train.csv'))
     X_train = df_train[df_train.columns[args.first_columns_to_exclude:]]
     y_train = df_train[args.target_column]
 
-    # Load testing data
-    df_test = pd.read_excel(os.path.join(args.test_dir, f'{args.feat}_test.xlsx'))
+    # Load testing data from CSV
+    df_test = pd.read_csv(os.path.join(args.test_dir, f'{args.feat}_test.csv'))
     X_test = df_test[df_test.columns[args.first_columns_to_exclude:]]
     y_test = df_test[args.target_column]
 
