@@ -28,7 +28,7 @@ conda env create -f environment.yml
 ## Datasets
 This study explores various featurization methods and ML models, including the D-MPNN model implemented using the chemprop package.
 
-The randomly split datasets for evaluating the chemprop model can be accessed here:
+For the Chemprop model (D-MPNN), the randomly split datasets for evaluation can be accessed here:
 [`D-MPNN_train.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/train/D-MPNN_train.csv), [`D-MPNN_test.csv`](https://github.com/justinsfyeh/BADsVS/blob/main/dataset/test/D-MPNN_test.csv).
 
 For the regression models (RR, SVR, KRR), three different featurization methods have been implemented and evaluated. The datasets containing the pre-generated features, ready for training and testing, can be found below:
@@ -41,4 +41,33 @@ Additionally, the training and testing sets, as well as the model checkpoints fo
 ```bash
 gdown https://drive.google.com/drive/folders/1ln6K561FxiqqGZ2n-LmJaAnrJtuleE-U?usp=drive_link --folder
 ```
-
+## Training Chemprop models for heat of formation predictions.
+1. Atomic fingerprint model
+```
+python chemprop_atom_fp/train.py \
+    --data_path dataset/train/D-MPNN_train.csv \
+    --separate_test_path dataset/test/D-MPNN_test.csv \
+    --extra_metrics mae \
+    --dataset_type regression \
+    --save_dir saves/atom_fp \
+    --warmup_epochs 2 --max_lr 0.007606892138090938 --init_lr 0.00015213784276181874 \
+    --epochs 50 --final_lr 1.5213784276181875e-05 --no_features_scaling \
+    --dropout 0.05 --hidden_size 500 --ffn_num_layers 1 \
+    --save_preds --fp_method atomic --activation PReLU \
+    --batch_size 64 \
+    --aggregation sum
+```
+2. Molecular fingerprint model
+python chemprop_atom_fp/train.py \
+    --data_path dataset/train/D-MPNN_train.csv \
+    --separate_test_path dataset/test/D-MPNN_test.csv \
+    --extra_metrics mae \
+    --dataset_type regression \
+    --save_dir saves/mol_fp \
+    --warmup_epochs 2 --max_lr 0.003327655204331969 --init_lr 6.655310408663938e-05 \
+    --epochs 1 --final_lr 6.655310408663938e-06 --no_features_scaling \
+    --dropout 0 --hidden_size 400 --ffn_num_layers 1 \
+    --save_preds --fp_method molecular --activation PReLU \
+    --batch_size 64 \
+    --aggregation sum
+```
