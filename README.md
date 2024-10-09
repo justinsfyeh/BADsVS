@@ -58,6 +58,7 @@ python chemprop_atom_fp/train.py \
     --aggregation sum
 ```
 2. Molecular fingerprint model
+```
 python chemprop_atom_fp/train.py \
     --data_path dataset/train/D-MPNN_train.csv \
     --separate_test_path dataset/test/D-MPNN_test.csv \
