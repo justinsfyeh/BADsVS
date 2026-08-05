@@ -11,8 +11,7 @@ mmp_analysis/
   02_build_db_linker.sh     # fragment → mmpdb index
   03_…15_*.py               # analysis + figure stages
   config.py  layers.py  mmpa_lib.py  figstyle.py
-  job_*.pbs                 # Slurm wrappers
-  environment.yml
+  environment.yml           # conda env `mmp`
   master.csv  candidates.csv
   data/
     properties.tsv
@@ -56,9 +55,22 @@ Layer figures: `python 14_layer_figures.py --results results_linker_s100/ ...`
 ## Full re-analysis (needs the DB on disk)
 
 ```bash
+conda activate mmp
 export MMPA_DB=/path/to/pairs.mmpdb
 export MMPA_RESULTS=$PWD/results_linker_s100
-sbatch job_analyze_s100.pbs
-```
 
-Stages 03–13 are defined in that job script; axis figures are stage 15.
+python 03_fragment_goodness.py --min-support 100
+python 04_mine_transformations.py --min-support 100
+python 05_context_rules.py
+python 06_extract_pairs.py
+python 07_candidate_endpoints.py --min-support 100
+python 08_aggregate.py
+python 09_correlations.py
+python 10_candidate_profiles.py
+python 11_recommend.py --min-support 100
+python 12_figures.py
+python 13_layer_report.py
+python 14_layer_figures.py --results results_linker_s100/
+python 15_axis_figures.py --results results_linker_s100/ \
+  --output-dir results_linker_s100/figures/
+```

@@ -8,7 +8,7 @@ It lives on the compute host at:
 /work/r12524031/mmp_linker/results_linker/pairs.mmpdb
 ```
 
-Rebuild with `job_index_linker.pbs` / `02_build_db_linker.sh` from `data/mols_linker.fragments`.
+Rebuild by indexing `data/mols_linker.fragments` with mmpdb (see `02_build_db_linker.sh`).
 
 Analysis jobs set:
 
