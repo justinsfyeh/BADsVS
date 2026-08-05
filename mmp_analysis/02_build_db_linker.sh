@@ -9,14 +9,13 @@
 #   data/mols_linker.fragments
 #   results_linker/pairs.mmpdb
 #
-# Usage:
-#   PATH=/home/fu/miniforge3/envs/tartarus/bin:$PATH ./02_build_db_linker.sh
+# Usage (after: conda activate mmp):
 #   ./02_build_db_linker.sh data results_linker 2 12 0        # fragment + index
 #   ./02_build_db_linker.sh data results_linker 2 12 1        # index only
 #
-# For large runs, prefer PBS:
-#   qsub job_fragment_linker.pbs
-#   qsub job_index_linker.pbs
+# Requires: linker_fragment.py, linker_cut_smarts.py, data/mols.smi,
+#           data/properties.tsv. Fragmentation needs substantial CPU;
+#           indexing needs ~100+ GB RAM and writes ~160 GB pairs.mmpdb.
 
 set -euo pipefail
 
@@ -26,7 +25,7 @@ NUM_CUTS="${3:-2}"
 MAX_VAR_HEAVIES="${4:-12}"
 SKIP_FRAGMENT="${5:-0}"
 
-PY="${PY:-/home/fu/miniforge3/envs/tartarus/bin/python3}"
+PY="${PY:-$(command -v python3 || command -v python)}"
 NUM_JOBS="${NUM_JOBS:-4}"
 
 mkdir -p "$RESULTS_DIR" logs
@@ -46,7 +45,7 @@ if [[ ! -f "$PROP_FILE" ]]; then
 fi
 
 if ! command -v mmpdb >/dev/null 2>&1; then
-    echo "ERROR: 'mmpdb' not in PATH. Use tartarus env." >&2
+    echo "ERROR: 'mmpdb' not in PATH. Activate the mmp conda env." >&2
     exit 1
 fi
 

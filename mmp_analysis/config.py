@@ -24,6 +24,7 @@ v4 changes vs v3
 """
 
 import os
+import shutil
 from pathlib import Path
 
 # --------------------------------------------------------------------------
@@ -158,7 +159,7 @@ CHEMOTYPE_SMARTS = [
 ]
 
 # --------------------------------------------------------------------------
-# Environment
+# Environment (resolved from PATH after `conda activate mmp`)
 # --------------------------------------------------------------------------
-PYTHON = "/home/fu/miniforge3/envs/tartarus/bin/python3"
-MMPDB  = "/home/fu/miniforge3/envs/tartarus/bin/mmpdb"
+PYTHON = shutil.which("python3") or shutil.which("python") or "python3"
+MMPDB  = shutil.which("mmpdb") or "mmpdb"
