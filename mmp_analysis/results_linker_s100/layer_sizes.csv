@@ -1,0 +1,5 @@
+layer,n_pairs,core_heavy_mean,core_heavy_std,frag_heavy_mean,frag_heavy_std,frag_ratio_mean,frag_ratio_std,frac_over_convention
+all,1873367,12.9675,2.72615,7.18552,1.73192,0.359245,0.084961,
+substituent,117952,17.2795,2.64249,2.72435,1.13885,0.135575,0.055257,
+scaffold,77998,12.1252,2.50827,7.54295,1.24108,0.387126,0.0599566,
+linker,1677417,12.7035,2.47111,7.4826,1.30132,0.373677,0.0625895,

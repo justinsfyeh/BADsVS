@@ -1,0 +1,23 @@
+# Large / regenerable MMP artifacts — never commit
+*.mmpdb
+*.mmpdb-journal
+**/pairs.mmpdb
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Local env / editor
+.conda/
+.env
+.DS_Store
+
+# Cluster logs (keep directory)
+logs/*
+!logs/.gitkeep
+
+# Optional heavy fragment file (regenerate / LFS / external storage)
+data/mols_linker.fragments
+data/mols.smi

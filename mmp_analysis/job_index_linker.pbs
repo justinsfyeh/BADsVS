@@ -1,0 +1,95 @@
+#!/bin/bash
+#SBATCH --account=MST113186
+#SBATCH --job-name=mmp_linker_idx
+#SBATCH --partition=normal
+#SBATCH --nodes=1
+#SBATCH --gpus-per-node=2
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=400G
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/mmp_linker_idx_%j.out
+#SBATCH --error=logs/mmp_linker_idx_%j.err
+#
+# Index linker fragments into /work/r12524031/mmp_linker/results_linker/pairs.mmpdb.
+# Run after linker fragmentation completes:
+#   sbatch job_index_linker.pbs
+#
+# Legacy C-only index (results/pairs.mmpdb): job_index.pbs
+
+set -euo pipefail
+
+cd "${SLURM_SUBMIT_DIR:-/home/r12524031}"
+WORK_DIR="/work/r12524031/mmp_linker/results_linker"
+DB="${WORK_DIR}/pairs.mmpdb"
+mkdir -p logs "$WORK_DIR"
+
+LOG_FILE="logs/mmp_linker_idx_${SLURM_JOB_ID}.log"
+ln -sfn "$(basename "$LOG_FILE")" logs/mmp_linker_idx_latest.log
+exec > >(stdbuf -oL -eL tee -a "$LOG_FILE") 2>&1
+
+echo "[$(date '+%F %T')] Job start: ${SLURM_JOB_ID}"
+echo "[$(date '+%F %T')] Host: $(hostname)"
+echo "[$(date '+%F %T')] Output DB: ${DB}"
+df -h /home/r12524031 /work/r12524031 | sed 's/^/  /'
+free -h | head -2
+
+source /home/r12524031/miniconda3/bin/activate
+conda activate mmp
+export PYTHONUNBUFFERED=1
+
+FRAG="data/mols_linker.fragments"
+PROP="data/properties.tsv"
+
+if [[ ! -f "$FRAG" ]]; then
+    echo "ERROR: $FRAG missing — run linker fragmentation first." >&2
+    exit 1
+fi
+if [[ ! -f "$PROP" ]]; then
+    echo "ERROR: $PROP missing — run 01_prepare.py first." >&2
+    exit 1
+fi
+
+if [[ -f "$DB" || -f "${DB}-journal" ]]; then
+    echo "[$(date '+%F %T')] Removing existing output in $WORK_DIR"
+    rm -f "$DB" "${DB}-journal"
+fi
+
+echo "[$(date '+%F %T')] Indexing linker fragments..."
+echo "  max_variable_heavies=12  max_heavies_transf=8  max_variable_ratio=0.5"
+
+# RDKit logger must be disabled IN THE SAME PROCESS as mmpdb.
+# A prior `python3 -c 'RDLogger.DisableLog...'` does NOT affect a later `mmpdb` binary.
+export MMPDB_OUTPUT="$DB"
+set +e
+python - <<'PY'
+from rdkit import RDLogger, rdBase
+RDLogger.DisableLog("rdApp.*")
+rdBase.DisableLog("rdApp.*")
+
+import os
+import sys
+from mmpdblib import commandline
+sys.argv = [
+    "mmpdb", "index",
+    "data/mols_linker.fragments",
+    "--output", os.environ["MMPDB_OUTPUT"],
+    "--max-variable-heavies", "12",
+    "--max-heavies-transf", "8",
+    "--max-variable-ratio", "0.5",
+    "--properties", "data/properties.tsv",
+]
+raise SystemExit(commandline.main())
+PY
+rc=$?
+set -e
+
+echo "[$(date '+%F %T')] mmpdb index exit=$rc"
+if [[ $rc -eq 0 ]]; then
+    mmpdb list "$DB" || true
+    ls -lah "$DB"
+    mkdir -p results_linker
+    ln -sfn "$DB" results_linker/pairs.mmpdb
+    echo "[$(date '+%F %T')] Symlinked results_linker/pairs.mmpdb -> $DB"
+fi
+echo "[$(date '+%F %T')] Job end"
+exit "$rc"

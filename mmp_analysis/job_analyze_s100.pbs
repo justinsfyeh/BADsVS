@@ -1,0 +1,109 @@
+#!/bin/bash
+#SBATCH --account=MST113186
+#SBATCH --job-name=mmp_an_s100
+#SBATCH --partition=normal
+#SBATCH --nodes=1
+#SBATCH --gpus-per-node=2
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=400G
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/mmp_analyze_s100_%j.out
+#SBATCH --error=logs/mmp_analyze_s100_%j.err
+#
+# Support-filtered analysis (min_support=100 on stage 03/04).
+# Outputs go to a SEPARATE tree from the full run:
+#   /work/r12524031/mmp_linker/results_linker_s100
+# Full run continues writing to:
+#   /work/r12524031/mmp_linker/results_linker
+#
+#   sbatch job_analyze_s100.pbs
+
+set -euo pipefail
+
+cd "${SLURM_SUBMIT_DIR:-/home/r12524031}"
+
+DB_REAL="/work/r12524031/mmp_linker/results_linker/pairs.mmpdb"
+OUT_DIR="/work/r12524031/mmp_linker/results_linker_s100"
+mkdir -p logs "$OUT_DIR/aggregated" "$OUT_DIR/figures"
+ln -sfn "$OUT_DIR" results_linker_s100
+
+export MMPA_DB="$DB_REAL"
+export MMPA_RESULTS="$OUT_DIR"
+export PYTHONUNBUFFERED=1
+
+LOG_FILE="logs/mmp_analyze_s100_${SLURM_JOB_ID}.log"
+ln -sfn "$(basename "$LOG_FILE")" logs/mmp_analyze_s100_latest.log
+exec > >(stdbuf -oL -eL tee -a "$LOG_FILE") 2>&1
+
+echo "[$(date '+%F %T')] Job start: ${SLURM_JOB_ID}"
+echo "[$(date '+%F %T')] Host: $(hostname)"
+echo "[$(date '+%F %T')] MMPA_DB=$MMPA_DB"
+echo "[$(date '+%F %T')] MMPA_RESULTS=$MMPA_RESULTS"
+echo "[$(date '+%F %T')] min_support=100 (stages 03/04)"
+df -h /home/r12524031 /work/r12524031 | sed 's/^/  /'
+free -h | head -2
+
+source /home/r12524031/miniconda3/bin/activate
+conda activate mmp
+PY=python
+
+"$PY" - <<'PY' || true
+from rdkit import RDLogger, rdBase
+RDLogger.DisableLog("rdApp.warning")
+rdBase.DisableLog("rdApp.warning")
+print("RDKit warning log disabled")
+PY
+
+if [[ ! -f "$DB_REAL" ]]; then
+    echo "ERROR: DB missing: $DB_REAL" >&2
+    exit 1
+fi
+ls -lah "$DB_REAL"
+
+for f in master.csv candidates.csv data/candidates.txt data/properties.tsv data/mols_linker.fragments; do
+    if [[ ! -f "$f" ]]; then
+        echo "ERROR: required input missing: $f" >&2
+        exit 1
+    fi
+done
+
+# Confirm config resolves to the s100 tree, not the full results_linker
+"$PY" - <<'PY'
+import config
+print("config.RESULTS =", config.RESULTS)
+print("config.DB      =", config.DB)
+assert "results_linker_s100" in str(config.RESULTS)
+assert str(config.DB).endswith("pairs.mmpdb")
+PY
+
+run_stage () {
+    local n="$1"; shift
+    echo
+    echo "============================================================"
+    echo "[$(date '+%F %T')] STAGE $n: $*"
+    echo "============================================================"
+    "$PY" "$@"
+    echo "[$(date '+%F %T')] STAGE $n DONE"
+}
+
+run_stage 03 03_fragment_goodness.py --min-support 100
+run_stage 04 04_mine_transformations.py --min-support 100
+run_stage 05 05_context_rules.py
+run_stage 06 06_extract_pairs.py
+run_stage 07 07_candidate_endpoints.py --min-support 100
+run_stage 08 08_aggregate.py
+run_stage 09 09_correlations.py
+run_stage 10 10_candidate_profiles.py
+run_stage 11 11_recommend.py --min-support 100
+run_stage 12 12_figures.py
+run_stage 13 13_layer_report.py
+
+echo
+echo "[$(date '+%F %T')] ALL STAGES COMPLETE (s100)"
+echo "---- key outputs ----"
+ls -lah "$OUT_DIR"/fragment_goodness.csv "$OUT_DIR"/global_scales.csv \
+        "$OUT_DIR"/transformations.csv "$OUT_DIR"/anchored_pairs.csv \
+        "$OUT_DIR"/candidate_rule_matrix.csv "$OUT_DIR"/recommendations.csv \
+        "$OUT_DIR"/figures/*.png 2>&1 | sed 's/^/  /'
+
+echo "[$(date '+%F %T')] Job end"
